@@ -1,3 +1,4 @@
+require 'net/ssh/gateway'
 module TunnelVision
   class Tunnel
     attr_accessor :pids
@@ -6,19 +7,11 @@ module TunnelVision
       @pids = []
     end
 
-    def add tunnel, user, host
-      cmd = 'ssh -L '
-
-      cmd << tunnel
-
-      cmd << ' '
-
-      cmd << user
-      cmd << '@'
-      cmd << host
-
-      puts cmd
-      @pids <<  `#{cmd} &`
+    def add tunnel, user, server
+      from, host, to = tunnel.split(':')
+      getaway = Net::SSH::Gateway.new server, user
+      port = gateway.open(host, from, to)
+      @pids << port
       puts "Spawned #{@pids.last}"
 
     end
