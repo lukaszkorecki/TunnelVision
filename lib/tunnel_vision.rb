@@ -10,10 +10,15 @@ module TunnelVision
 
     def add tunnel, user, server
       from, host, to = tunnel.split(':')
-      getaway = Net::SSH.start server, user do |ssh|
-        ssh.forward.local from, host, to
-        ssh.loop { true }
+      pid = fork do
+        getaway = Net::SSH.start server, user do |ssh|
+          ssh.forward.local from, host, to
+          ssh.loop { true }
+        end
       end
+      puts pid
+      @pids << pid
+      pid
     end
 
     def close_all!

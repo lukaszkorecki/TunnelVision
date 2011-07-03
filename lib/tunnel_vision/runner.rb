@@ -34,22 +34,34 @@ module TunnelVision
         exit 1
       end
 
+      current = {}
       tunnels.each do |tunnel_def|
         puts "Starting:\n\t#{tunnel_def['description']}"
-        @tunnel.add tunnel_def['tunnel'], tunnel_def['user'], tunnel_def['host']
+        pid = @tunnel.add tunnel_def['tunnel'], tunnel_def['user'], tunnel_def['host']
+        current[pid] = tunnel_def['description']
       end
 
       File.open('.opened_tunnels','w') do |file|
-        YAML::dump(@tunnel.pids, file)
+        YAML::dump(current, file)
       end
     end
 
     def status
-      y YAML::load_file '.opened_tunnels'
+      begin
+        current = YAML::load_file '.opened_tunnels'
+      rescue
+        puts "No tunnels or .opened_tunnels files is locked/deleted"
+        exit 0
+      end
+
+      puts "Current tunnels"
+      current.each do |id, description|
+        puts "\t#{description} (#{id})"
+      end
     end
 
     def stop
-      @tunnel.pids = YAML::load_file('.opened_tunnels')
+      @tunnel.pids = YAML::load_file('.opened_tunnels').keys
       @tunnel.close_all!
       FileUtils.rm '.opened_tunnels'
 
