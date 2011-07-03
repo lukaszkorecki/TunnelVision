@@ -3,5 +3,5 @@
 require File.expand_path(File.join(File.dirname(__FILE__), "..","lib","tunnel_visiion"))
 require 'tunnel_vision/runner'
 
-TunnelVision::Runner.new
+TunnelVision::Runner.new ARGV
 
