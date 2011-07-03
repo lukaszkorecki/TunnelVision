@@ -1,4 +1,6 @@
 require 'yaml'
+require 'fileutils'
+
 module TunnelVision
   class Runner
     def initialize args
@@ -8,14 +10,15 @@ module TunnelVision
         exit 0
       end
 
-      @tunnel = ::Tunnel.new
+      @tunnel = TunnelVision::Tunnel.new
 
       case args.first
       when 'generate'
         generate
-
       when 'start'
         start
+      when 'status'
+        status
       when 'stop'
         stop
       else
@@ -32,12 +35,24 @@ module TunnelVision
       end
 
       tunnels.each do |tunnel_def|
+        puts "Starting:\n\t#{tunnel_def['description']}"
         @tunnel.add tunnel_def['tunnel'], tunnel_def['user'], tunnel_def['host']
+      end
+
+      File.open('.opened_tunnels','w') do |file|
+        YAML::dump(@tunnel.pids, file)
       end
     end
 
+    def status
+      y YAML::load_file '.opened_tunnels'
+    end
+
     def stop
+      @tunnel.pids = YAML::load_file('.opened_tunnels')
       @tunnel.close_all!
+      FileUtils.rm '.opened_tunnels'
+
     end
 
     def help
@@ -50,22 +65,24 @@ module TunnelVision
 
     def generate
       puts "Generating tunnels.yaml"
-      example = {
-        "example" => {
+      example = [
+        {
+          'description' => 'irc on staging server',
           "user" => 'bob',
           'host' => 'example.com',
           'tunnel' => '123:123.0.0.1:80'
         },
-          'typical' => {
+        {
+          'description' => 'db from database server',
           'user' => 'clyde',
           'host' => 'bar.foo.com',
           'tunnel' => '7777:bar.foo.com:8080'
         }
-      }
+      ]
 
       begin
         File.open('tunnels.yaml', 'w') do |file|
-          file.write example.to_yaml
+          YAML::dump(example, file)
         end
 
       rescue "Error when creating tunnels.yaml"

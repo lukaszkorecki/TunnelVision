@@ -1,21 +1,26 @@
 module TunnelVision
   class Tunnel
+    attr_accessor :pids
 
     def initialize
       @pids = []
     end
 
-    def add command, user, host
-      cmd = 'ssh -L'
+    def add tunnel, user, host
+      cmd = 'ssh -L '
+
+      cmd << tunnel
+
+      cmd << ' '
+
       cmd << user
       cmd << '@'
       cmd << host
 
-      cmd << ' '
-      cmd << command
-
-      @pids << spawn(cmd)
+      puts cmd
+      @pids <<  `#{cmd} &`
       puts "Spawned #{@pids.last}"
+
     end
 
     def close_all!
