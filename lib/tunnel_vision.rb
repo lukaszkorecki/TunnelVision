@@ -11,12 +11,18 @@ module TunnelVision
     def add tunnel, user, server
       from, host, to = tunnel.split(':')
       pid = fork do
-        getaway = Net::SSH.start server, user do |ssh|
-          ssh.forward.local from, host, to
-          ssh.loop { true }
+        puts "Connecting #{user}@#{server}"
+        begin
+          getaway = Net::SSH.start server, user do |ssh|
+            puts "setting forwarding (#{from} -> #{to} on #{host})"
+            ssh.forward.local from, host, to
+            ssh.loop { true }
+          end
+        rescue
+          puts ">>> AUTH ERROR <<"
+          exit 1
         end
       end
-      puts pid
       @pids << pid
       pid
     end
