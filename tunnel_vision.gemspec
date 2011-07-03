@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "tunnel_vision"
   s.version     = TunnelVision::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
+  s.authors     = ["Łukasz Korecki"]
+  s.email       = ["lukasz@coffeesounds.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{SSH tunnel manager}
+  s.description = %q{Easily open and close ssh tunnels required by your project}
 
   s.rubyforge_project = "tunnel_vision"
 
