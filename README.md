@@ -4,7 +4,7 @@
 
 Simple tool which lets you create definitions of ssh tunnels your project will need.
 
-Then you by issuing one command you can open all of them and carry on with your work.
+By issuing one command it opens all required ssh tunnels and lets you carry on with your work.
 
 ### Scratching an itch:
 
