@@ -18,8 +18,9 @@ module TunnelVision
             ssh.forward.local from, host, to
             ssh.loop { true }
           end
-        rescue
+        rescue => e
           puts ">>> AUTH ERROR <<"
+          puts e.inspect
           exit 1
         end
       end
